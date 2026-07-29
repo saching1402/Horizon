@@ -1,0 +1,21 @@
+{
+  "name": "horizon-dealflow",
+  "version": "1.0.0",
+  "description": "Horizon — institutional frontier-technology deal-flow platform with daily discovery agents, a 5-stage funnel, tiered investors, trajectory tracking, a scoring engine and an emailed daily digest.",
+  "main": "server.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "agents:run": "node -e \"require('./agents').runAll(require('./db')).then(r=>{console.log(JSON.stringify(r,null,2));process.exit(0)}).catch(e=>{console.error(e);process.exit(1)})\""
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.14",
+    "pg": "^8.12.0"
+  }
+}

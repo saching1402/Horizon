@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Horizon — Frontier Deal Flow</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+/* ============================================================
+   HORIZON — Frontier Technology Deal Flow  ·  design tokens
+   ============================================================ */
+:root{
+  color-scheme: dark;
+  --bg:#0A0F1A; --bg-2:#0D1524; --panel:#111C2E; --panel-2:#152238; --panel-hi:#1B2B45;
+  --line:#243553; --line-soft:#1A2740; --ink:#EAF0FB; --ink-2:#9DB0CE; --ink-3:#647698;
+  --gold:#E6AB54; --gold-hi:#F4C878; --gold-dim:#9C7736; --teal:#4FB4C7; --teal-hi:#74D2E2;
+  --s1:#3E5C8A; --s2:#4487A6; --s3:#4FB0A0; --s4:#D69A46; --s5:#F0B85E;
+  --good:#3FB27F; --warn:#E0A94A; --bad:#E06B6B; --info:#5B9BD5;
+  --radius:14px; --radius-sm:9px;
+  --shadow: 0 1px 0 rgba(255,255,255,.03) inset, 0 18px 40px -22px rgba(0,0,0,.8);
+  --mono: ui-monospace,"SF Mono",Menlo,"Cascadia Code",Consolas,monospace;
+  --sans: -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+}
+:root[data-theme="light"]{
+  color-scheme: light;
+  --bg:#EEF1F6; --bg-2:#E7ECF3; --panel:#FFFFFF; --panel-2:#F5F7FB; --panel-hi:#EDF1F8;
+  --line:#D3DBE8; --line-soft:#E2E8F1; --ink:#132038; --ink-2:#4A5A76; --ink-3:#8494AC;
+  --gold:#B77A1E; --gold-hi:#8A5A12; --gold-dim:#C79A55; --teal:#1E8598; --teal-hi:#12727f;
+  --s1:#5877A8; --s2:#4487A6; --s3:#2F977F; --s4:#C07E22; --s5:#B87A18;
+  --shadow: 0 1px 2px rgba(20,40,80,.06), 0 14px 30px -20px rgba(20,40,80,.25);
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    color-scheme: light;
+    --bg:#EEF1F6; --bg-2:#E7ECF3; --panel:#FFFFFF; --panel-2:#F5F7FB; --panel-hi:#EDF1F8;
+    --line:#D3DBE8; --line-soft:#E2E8F1; --ink:#132038; --ink-2:#4A5A76; --ink-3:#8494AC;
+    --gold:#B77A1E; --gold-hi:#8A5A12; --gold-dim:#C79A55; --teal:#1E8598; --teal-hi:#12727f;
+    --s1:#5877A8; --s2:#4487A6; --s3:#2F977F; --s4:#C07E22; --s5:#B87A18;
+    --shadow: 0 1px 2px rgba(20,40,80,.06), 0 14px 30px -20px rgba(20,40,80,.25);
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:
+   radial-gradient(1200px 600px at 78% -8%, rgba(230,171,84,.07), transparent 60%),
+   radial-gradient(900px 500px at 8% 4%, rgba(79,180,199,.06), transparent 55%),
+   var(--bg);
+  color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{margin:0;font-weight:640;letter-spacing:-.01em}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3)}
+.muted{color:var(--ink-2)} .dim{color:var(--ink-3)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:20px;border:2px solid transparent;background-clip:padding-box}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;background:linear-gradient(180deg,var(--bg-2),var(--bg));
+  border-right:1px solid var(--line-soft);padding:18px 14px;display:flex;flex-direction:column;gap:6px}
+.brand{display:flex;align-items:center;gap:11px;padding:6px 8px 16px}
+.brand .mark{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
+  background:radial-gradient(circle at 30% 25%,var(--gold-hi),var(--gold) 55%,var(--gold-dim));
+  box-shadow:0 0 0 1px rgba(230,171,84,.35),0 6px 18px -6px rgba(230,171,84,.5);color:#1a1204;font-weight:800}
+.brand b{font-size:16px;letter-spacing:.02em}
+.brand .tag{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);font-family:var(--mono)}
+.nav-group{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);padding:14px 10px 6px}
+.nav a{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:9px;color:var(--ink-2);font-weight:520;font-size:13.5px}
+.nav a .ic{width:18px;height:18px;flex:none;opacity:.85}
+.nav a:hover{background:var(--panel);color:var(--ink)}
+.nav a.on{background:linear-gradient(90deg,rgba(230,171,84,.16),rgba(230,171,84,.04));color:var(--ink);box-shadow:inset 2px 0 0 var(--gold)}
+.side .foot{margin-top:auto;border-top:1px solid var(--line-soft);padding-top:12px;display:flex;align-items:center;gap:10px}
+.avatar{width:30px;height:30px;border-radius:50%;background:conic-gradient(from 210deg,var(--teal),var(--gold),var(--teal));display:grid;place-items:center;color:#0a0f1a;font-weight:700;font-size:12px}
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;padding:14px 26px;
+  background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line-soft)}
+.topbar h1{font-size:17px}
+.crumb{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.04em}
+.search{flex:1;max-width:420px;position:relative}
+.search input{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:9px 12px 9px 34px;font-size:13px}
+.search input::placeholder{color:var(--ink-3)}
+.search svg{position:absolute;left:10px;top:9px;color:var(--ink-3)}
+.tb-btn{display:flex;align-items:center;gap:7px;background:var(--panel);border:1px solid var(--line);color:var(--ink-2);border-radius:10px;padding:8px 12px;font-size:12.5px;font-weight:560}
+.tb-btn:hover{border-color:var(--gold);color:var(--ink)}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 0 rgba(63,178,127,.6);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(63,178,127,.5)}70%{box-shadow:0 0 0 7px rgba(63,178,127,0)}100%{box-shadow:0 0 0 0 rgba(63,178,127,0)}}
+.wrap{padding:24px 26px 60px;max-width:1500px;width:100%}
+.view{display:none;animation:fade .35s ease} .view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.panel{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line-soft);border-radius:var(--radius);box-shadow:var(--shadow)}
+.pad{padding:18px}
+.grid{display:grid;gap:16px}
+.phead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.phead h3{font-size:14.5px}.phead .eyebrow{margin-bottom:3px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.03em;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2);background:var(--panel)}
+.chip.dot::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c,var(--gold))}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:3px 8px;border-radius:7px;background:var(--panel-hi);border:1px solid var(--line);color:var(--ink-2)}
+.pill{font-family:var(--mono);font-size:10px;letter-spacing:.05em;padding:3px 8px;border-radius:999px;font-weight:600}
+.pill.up{color:var(--good);background:color-mix(in srgb,var(--good) 15%,transparent)}
+.pill.t1{color:var(--gold-hi);background:color-mix(in srgb,var(--gold) 16%,transparent);border:1px solid color-mix(in srgb,var(--gold) 30%,transparent)}
+.pill.t2{color:var(--teal-hi);background:color-mix(in srgb,var(--teal) 14%,transparent);border:1px solid color-mix(in srgb,var(--teal) 26%,transparent)}
+.pill.t3{color:var(--ink-2);background:var(--panel-hi);border:1px solid var(--line)}
+.btn{background:var(--gold);color:#1a1204;border:none;border-radius:10px;padding:9px 15px;font-weight:680;font-size:13px}
+.btn:hover{background:var(--gold-hi)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink-2)}
+.btn.ghost:hover{border-color:var(--gold);color:var(--ink)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.kpi{position:relative;overflow:hidden}
+.kpi .val{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1;margin:6px 0 5px;font-variant-numeric:tabular-nums}
+.kpi .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.kpi .spark{position:absolute;right:14px;bottom:12px;opacity:.9}
+.funnel{display:flex;flex-direction:column;gap:9px}
+.frow{display:grid;grid-template-columns:120px 1fr auto;align-items:center;gap:14px;cursor:pointer}
+.frow:hover .fbar i{filter:brightness(1.12)}
+.frow .flab b{display:block;font-size:12.5px}
+.frow .flab span{font-size:10.5px;color:var(--ink-3);font-family:var(--mono)}
+.fbar{height:34px;border-radius:8px;background:var(--panel-hi);position:relative;overflow:hidden;border:1px solid var(--line-soft)}
+.fbar i{position:absolute;left:0;top:0;bottom:0;border-radius:8px;display:flex;align-items:center;padding-left:12px;color:#0a0f1a;font-weight:720;font-size:12.5px;font-variant-numeric:tabular-nums}
+.frow .fcount{font-family:var(--mono);font-size:13px;color:var(--ink);min-width:46px;text-align:right;font-weight:640}
+.frow .fpc{font-family:var(--mono);font-size:10px;color:var(--ink-3)}
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:600;padding:9px 12px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel)}
+tbody td{padding:11px 12px;border-bottom:1px solid var(--line-soft);font-size:13px}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--panel-hi)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono)}
+.co{display:flex;align-items:center;gap:11px}
+.logo{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-weight:750;font-size:12px;color:var(--ink);background:var(--panel-hi);border:1px solid var(--line);flex:none}
+.co b{font-size:13.5px;display:block;line-height:1.15}
+.co small{color:var(--ink-3);font-size:11px}
+.score-badge{display:inline-flex;align-items:baseline;gap:2px;font-family:var(--mono);font-weight:720;font-size:14px}
+.score-badge s{text-decoration:none;font-size:10px;color:var(--ink-3)}
+.smeter{width:52px;height:5px;border-radius:3px;background:var(--panel-hi);overflow:hidden;display:inline-block;vertical-align:middle}
+.smeter i{display:block;height:100%;border-radius:3px}
+.stagedot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.slabel{display:inline-flex;align-items:center;gap:7px;font-size:12px}
+.segmap{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:12px}
+.segcard{padding:13px;border-radius:12px;border:1px solid var(--line-soft);background:var(--panel-hi);position:relative;overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s}
+.segcard:hover{transform:translateY(-2px);border-color:var(--gold)}
+.segcard .n{font-size:13px;font-weight:620;margin-bottom:2px}
+.segcard .c{font-family:var(--mono);font-size:22px;font-weight:700}
+.segcard .m{font-size:10.5px;color:var(--ink-3);font-family:var(--mono)}
+.segcard .glow{position:absolute;right:-20px;top:-20px;width:80px;height:80px;border-radius:50%;filter:blur(22px);opacity:.5}
+.cols{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;align-items:start}
+.stack{display:flex;flex-direction:column;gap:16px}
+.lrow{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--line-soft)}
+.lrow:last-child{border-bottom:none}
+.lrow .rt{flex:1;min-width:0}
+.lrow .rt b{font-size:13px;display:block}
+.lrow .rt small{color:var(--ink-3);font-size:11.5px}
+.brief{background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 9%,var(--panel)),var(--panel));border:1px solid color-mix(in srgb,var(--gold) 22%,var(--line))}
+.brief .item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line-soft)}
+.brief .item:last-child{border-bottom:none}
+.brief .ib{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;flex:none;font-size:13px;background:var(--panel-hi);border:1px solid var(--line)}
+.scrim{position:fixed;inset:0;background:rgba(4,8,16,.6);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:60}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:min(760px,94vw);background:var(--bg-2);border-left:1px solid var(--line);z-index:70;transform:translateX(100%);transition:transform .34s cubic-bezier(.4,0,.15,1);overflow-y:auto;box-shadow:-30px 0 60px -30px rgba(0,0,0,.7)}
+.drawer.on{transform:none}
+.dhead{position:sticky;top:0;background:color-mix(in srgb,var(--bg-2) 88%,transparent);backdrop-filter:blur(8px);padding:20px 24px;border-bottom:1px solid var(--line-soft);z-index:2}
+.dclose{position:absolute;right:18px;top:18px;width:32px;height:32px;border-radius:9px;background:var(--panel);border:1px solid var(--line);color:var(--ink-2);display:grid;place-items:center}
+.dbody{padding:22px 24px 60px;display:flex;flex-direction:column;gap:18px}
+.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.metric{background:var(--panel);border:1px solid var(--line-soft);border-radius:10px;padding:12px}
+.metric .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.metric .v{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:4px}
+.tl{position:relative;padding-left:20px}
+.tl::before{content:"";position:absolute;left:5px;top:4px;bottom:4px;width:1.5px;background:var(--line)}
+.tl .ev{position:relative;padding:0 0 15px 4px}
+.tl .ev::before{content:"";position:absolute;left:-18px;top:5px;width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px var(--bg-2)}
+.tl .ev time{font-family:var(--mono);font-size:10.5px;color:var(--ink-3)}
+.scatter{width:100%;height:auto}
+.axlab{font-family:var(--mono);font-size:9.5px;fill:var(--ink-3);letter-spacing:.08em}
+.gridline{stroke:var(--line-soft);stroke-width:1}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.sel{background:var(--panel);border:1px solid var(--line);color:var(--ink-2);border-radius:9px;padding:8px 11px;font-size:12.5px;font-family:var(--sans)}
+.seg-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--ink-2)}
+.seg-legend span{display:inline-flex;align-items:center;gap:6px}
+.tierband{display:flex;align-items:center;gap:10px;margin:20px 0 12px}
+.tierband .bar{height:3px;flex:1;border-radius:3px}
+.invcard{display:flex;gap:14px;padding:14px;border-radius:12px;border:1px solid var(--line-soft);background:var(--panel);cursor:pointer}
+.invcard:hover{border-color:var(--gold)}
+.invlogo{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;font-weight:750;flex:none;background:var(--panel-hi);border:1px solid var(--line)}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.field label{font-size:12px;font-weight:560;color:var(--ink-2)}
+.field input,.field textarea,.field select{background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:9px 12px;font-size:13px;font-family:var(--sans)}
+.email-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--line-soft);border-radius:9px;background:var(--panel);margin-bottom:8px}
+.email-row .x{margin-left:auto;color:var(--ink-3);cursor:pointer}
+.toggle{width:40px;height:23px;border-radius:999px;background:var(--gold);position:relative;border:none}
+.toggle::after{content:"";position:absolute;top:2px;right:2px;width:19px;height:19px;border-radius:50%;background:#0a0f1a}
+.weightrow{display:grid;grid-template-columns:150px 1fr 44px;gap:12px;align-items:center;margin-bottom:11px}
+.weightrow input[type=range]{width:100%;accent-color:var(--gold)}
+.upload{border:1.5px dashed var(--line);border-radius:12px;padding:26px;text-align:center;color:var(--ink-3);background:var(--panel)}
+.upload b{color:var(--ink-2)}
+.src{display:flex;align-items:center;gap:11px;padding:11px 13px;border:1px solid var(--line-soft);border-radius:10px;background:var(--panel);margin-bottom:9px}
+.srcic{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:var(--panel-hi);border:1px solid var(--line);flex:none}
+.note{font-size:11.5px;color:var(--ink-3);font-family:var(--mono);letter-spacing:.02em}
+.hr{height:1px;background:var(--line-soft);margin:8px 0}
+@media(max-width:1080px){.app{grid-template-columns:1fr}.side{display:none}.kpis{grid-template-columns:repeat(2,1fr)}.cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="mark">◹</div><div><b>Horizon</b><div class="tag">Frontier Deal Flow</div></div></div>
+    <div class="nav" id="nav">
+      <div class="nav-group">Command</div>
+      <a data-view="dashboard" class="on"><span class="ic">◱</span> Dashboard</a>
+      <a data-view="funnel"><span class="ic">⧗</span> Deal Funnel</a>
+      <a data-view="companies"><span class="ic">◎</span> Companies</a>
+      <div class="nav-group">Intelligence</div>
+      <a data-view="segments"><span class="ic">❖</span> Segments</a>
+      <a data-view="investors"><span class="ic">◈</span> Investors</a>
+      <a data-view="research"><span class="ic">⌕</span> Research &amp; Sources</a>
+      <div class="nav-group">System</div>
+      <a data-view="agents"><span class="ic">⟳</span> Daily Agents</a>
+      <a data-view="settings"><span class="ic">⚙</span> Settings</a>
+    </div>
+    <div class="foot"><div class="avatar">SG</div>
+      <div style="min-width:0"><b style="font-size:12.5px">Sachin G.</b><div class="note" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Principal · Horizon</div></div></div>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div><div class="crumb" id="crumb">Command / Dashboard</div><h1 id="ptitle">Dashboard</h1></div>
+      <div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg><input placeholder="Search companies, investors, segments…" /></div>
+      <button class="tb-btn" id="agentStatus"><span class="pulse"></span> Agents live</button>
+      <button class="tb-btn" onclick="toggleTheme()" title="Toggle theme">◐</button>
+    </div>
+    <div class="wrap">
+      <section class="view on" id="v-dashboard"></section>
+      <section class="view" id="v-funnel"></section>
+      <section class="view" id="v-companies"></section>
+      <section class="view" id="v-segments"></section>
+      <section class="view" id="v-investors"></section>
+      <section class="view" id="v-research"></section>
+      <section class="view" id="v-agents"></section>
+      <section class="view" id="v-settings"></section>
+    </div>
+  </div>
+</div>
+<div class="scrim" id="scrim" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer"></div>
+
+<script>
+/* ===================== data (from API) ===================== */
+let STAGES=[],SEG=[],INV=[],CO=[],INVBYNAME={},RECIPIENTS=[],SOURCES=[],CONFIG={},DIGEST=null;
+async function api(p,method,body){
+  const r=await fetch('/api'+p,{method:method||'GET',headers:{'content-type':'application/json'},body:body?JSON.stringify(body):undefined});
+  if(!r.ok){let m=r.statusText;try{m=(await r.json()).error||m}catch(_){}throw new Error(m)}
+  return r.status===204?null:r.json();
+}
+function tierOfCo(co){const ts=(co.investors||[]).map(n=>INVBYNAME[n]?.t||3);return ts.length?Math.min(...ts):3}
+
+/* ===================== SVG chart helpers ===================== */
+function spark(vals,w=88,h=26,col="var(--gold)"){
+  if(!vals||!vals.length)vals=[0,0];
+  const mn=Math.min(...vals),mx=Math.max(...vals),r=mx-mn||1;
+  const pts=vals.map((v,i)=>[i/Math.max(1,vals.length-1)*w,h-2-((v-mn)/r)*(h-4)]);
+  const d=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+  const gid="g"+Math.random().toString(36).slice(2,7);
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" class="spark"><defs><linearGradient id="${gid}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".35"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs><path d="${d}L${w} ${h} L0 ${h} Z" fill="url(#${gid})"/><path d="${d}" fill="none" stroke="${col}" stroke-width="1.6"/><circle cx="${pts[pts.length-1][0].toFixed(1)}" cy="${pts[pts.length-1][1].toFixed(1)}" r="2.4" fill="${col}"/></svg>`;
+}
+function lineChart(series,w=560,h=200,norm=false){
+  const pad={l:44,r:14,t:14,b:26};const iw=w-pad.l-pad.r,ih=h-pad.t-pad.b;
+  // When series live on very different scales (ARR vs valuation), index each to
+  // its own peak so both growth curves read; absolute figures sit in the cards.
+  const proc=series.map(s=>{const mx=Math.max(...s.vals,1);return {...s,plot:norm?s.vals.map(v=>v/mx*100):s.vals}});
+  const all=proc.flatMap(s=>s.plot);const mx=norm?105:Math.max(...all,1),mn=0;const r=mx-mn||1;
+  const n=(series[0].vals.length)||1;
+  const X=i=>pad.l+i/Math.max(1,n-1)*iw, Y=v=>pad.t+ih-((v-mn)/r)*ih;
+  let g="";for(let k=0;k<=4;k++){const yy=pad.t+ih-k/4*ih;const lab=norm?Math.round(mx*k/4)+"%":fmtShort(mn+r*k/4);g+=`<line class="gridline" x1="${pad.l}" y1="${yy}" x2="${w-pad.r}" y2="${yy}"/><text class="axlab" x="${pad.l-8}" y="${yy+3}" text-anchor="end">${lab}</text>`}
+  let paths="";proc.forEach((s)=>{const d=s.plot.map((v,i)=>(i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)).join(" ");
+    paths+=`<path d="${d}" fill="none" stroke="${s.c}" stroke-width="2"/><circle cx="${X(n-1)}" cy="${Y(s.plot[n-1]||0)}" r="3.2" fill="${s.c}"/>`});
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" class="scatter">${g}${paths}</svg>`;
+}
+function fmtShort(v){return v>=1000?"$"+(v/1000).toFixed(1)+"B":"$"+Math.round(v)+"M"}
+function radar(sc,size=190){
+  const keys=[["growth","Growth"],["inv","Investors"],["cover","Big-Tech"],["seg","Segment"],["mom","Momentum"],["val","Valuation"]];
+  const cx=size/2,cy=size/2,R=size/2-26,N=keys.length;
+  const pt=(i,r)=>{const a=-Math.PI/2+i/N*2*Math.PI;return [cx+Math.cos(a)*r,cy+Math.sin(a)*r]};
+  let rings="";for(let k=1;k<=3;k++){const p=keys.map((_,i)=>pt(i,R*k/3)).map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ");rings+=`<polygon points="${p}" fill="none" stroke="var(--line-soft)" stroke-width="1"/>`}
+  let axes="",labs="";keys.forEach((k,i)=>{const e=pt(i,R);axes+=`<line x1="${cx}" y1="${cy}" x2="${e[0]}" y2="${e[1]}" stroke="var(--line-soft)"/>`;const l=pt(i,R+15);labs+=`<text x="${l[0]}" y="${l[1]+3}" text-anchor="middle" class="axlab">${k[1]}</text>`});
+  const poly=keys.map((k,i)=>pt(i,R*Math.max(5,sc[k[0]]||0)/100)).map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ");
+  return `<svg viewBox="0 0 ${size} ${size}" width="100%" style="max-width:230px;margin:auto;display:block">${rings}${axes}<polygon points="${poly}" fill="color-mix(in srgb,var(--gold) 26%,transparent)" stroke="var(--gold)" stroke-width="2"/>${labs}</svg>`;
+}
+function scoreBadge(s){const col=s>=85?"var(--good)":s>=75?"var(--gold)":s>=65?"var(--warn)":"var(--ink-2)";return `<span class="score-badge" style="color:${col}">${s}<s>/100</s></span>`}
+function meter(s){const col=s>=85?"var(--good)":s>=75?"var(--gold)":"var(--teal)";return `<span class="smeter"><i style="width:${s}%;background:${col}"></i></span>`}
+function logoFor(name){return (name||"?").split(/[\s-]/).slice(0,2).map(w=>w[0]).join("").toUpperCase()}
+function stageOf(id){return STAGES.find(s=>s.id===id)||{c:"var(--s1)",short:"S"+id}}
+
+/* ===================== views ===================== */
+function render(){dashboard();funnel();companies();segments();investors();research();agents();settings();}
+
+function dashboard(){
+  const top=[...CO].sort((a,b)=>b.score-a.score).slice(0,6);
+  const totalPipe=STAGES.reduce((a,s)=>a+s.count,0);
+  const shortlist=STAGES.find(s=>s.id===5)?.count||0;
+  const scores=CO.map(c=>c.score).sort((a,b)=>a-b);const median=scores.length?scores[Math.floor(scores.length/2)]:0;
+  const coverageHits=CO.filter(c=>c.coverage&&c.coverage!=="—").length;
+  const kpis=[["Active Pipeline",totalPipe,"across 5 stages",CO.map(c=>c.score)],
+    ["Shortlist",shortlist,"stage 5",[8,9,9,10,11,11,shortlist]],
+    ["Median Score",median,"Horizon score",scores.slice(-7)],
+    ["Coverage Hits",coverageHits,"hyperscaler / leader quotes",[40,44,49,55,58,61,coverageHits]]];
+  const segBubbles=SEG.map(s=>{const co=CO.filter(c=>c.seg===s[0]).length;
+    return `<div class="segcard" onclick="openSeg('${esc(s[0])}')"><div class="glow" style="background:var(--gold)"></div><div class="n">${s[1]}</div><div class="c">${s[2]}</div><div class="m">${co?co+' tracked':'monitoring'}</div></div>`}).join("");
+  const brief=(DIGEST&&DIGEST.highlights?DIGEST.highlights:["Run the daily agents to generate your first digest."]).slice(0,5)
+    .map(h=>`<div class="item"><div class="ib">•</div><div style="flex:1"><div>${esc(h)}</div></div></div>`).join("");
+  const covItems=[["Jensen Huang","NVIDIA","named CoreWeave, Figure & Wayve at GTC","🟢"],["Satya Nadella","Microsoft","Azure ties to Mistral, PsiQuantum","🔷"],["Sam Altman","OpenAI","backs Physical Intelligence, Chai","⚪"],["Demis Hassabis","Isomorphic","AlphaFold → drug pipelines","🧬"]]
+    .map(x=>`<div class="lrow"><div class="ib" style="width:30px;height:30px;border-radius:8px;background:var(--panel-hi);border:1px solid var(--line);display:grid;place-items:center;flex:none">${x[3]}</div><div class="rt"><b>${x[0]} <span class="dim" style="font-weight:500">· ${x[1]}</span></b><small>${x[2]}</small></div></div>`).join("");
+  document.getElementById('v-dashboard').innerHTML=`
+  <div class="grid" style="grid-template-columns:1fr">
+    <div class="kpis">${kpis.map(k=>`<div class="panel pad kpi"><div class="lab">${k[0]}</div><div class="val">${k[1]}</div><span class="pill up">${k[2]}</span><div class="spark">${spark(k[3],90,30)}</div></div>`).join("")}</div>
+    <div class="cols">
+      <div class="panel pad">
+        <div class="phead"><div><div class="eyebrow">Pipeline</div><h3>Deal Funnel — 5 stages</h3></div><span class="chip">${totalPipe} companies</span></div>
+        <div class="funnel">${STAGES.map((s,i)=>{const w=8+(s.count/(STAGES[0].count||1))*92;const conv=i?Math.round(s.count/(STAGES[i-1].count||1)*100):100;
+          return `<div class="frow" onclick="go('funnel')"><div class="flab"><b>S${s.id} · ${s.short}</b><span>${s.full}</span></div><div class="fbar"><i style="width:${w}%;background:${s.c}">${s.count}</i></div><div><div class="fcount">${s.count}</div><div class="fpc">${i?conv+'% conv':'entry'}</div></div></div>`}).join("")}</div>
+      </div>
+      <div class="panel pad brief">
+        <div class="phead"><div><div class="eyebrow" style="color:var(--gold)">${DIGEST?DIGEST.date:'—'}</div><h3>Daily Briefing</h3></div><span class="chip dot" style="--c:var(--good)">latest run</span></div>
+        ${brief}
+        <div style="margin-top:12px;display:flex;gap:8px"><button class="btn" onclick="go('agents')">View full digest</button><button class="btn ghost" onclick="go('settings')">Email settings</button></div>
+      </div>
+    </div>
+    <div class="cols">
+      <div class="panel pad"><div class="phead"><div><div class="eyebrow">Landscape</div><h3>Valuation × Growth — bubble = ARR</h3></div><div class="seg-legend">${STAGES.map(s=>`<span><span class="stagedot" style="background:${s.c}"></span>S${s.id}</span>`).join("")}</div></div>${bubbleChart()}</div>
+      <div class="panel pad"><div class="phead"><div><div class="eyebrow">Ranked</div><h3>Top by Horizon Score</h3></div><span class="chip">weighted</span></div>
+        ${top.map((c,i)=>`<div class="lrow" onclick="openCo(${c.id})" style="cursor:pointer"><div class="dim mono" style="width:16px">${i+1}</div><div class="logo">${logoFor(c.name)}</div><div class="rt"><b>${c.name}</b><small>${c.seg} · ${c.val}</small></div>${meter(c.score)} ${scoreBadge(c.score)}</div>`).join("")}</div>
+    </div>
+    <div class="panel pad"><div class="phead"><div><div class="eyebrow">Coverage · ${SEG.length} segments</div><h3>Segment Map — companies flagged per segment</h3></div><button class="tb-btn" onclick="go('segments')">Open segments →</button></div><div class="segmap">${segBubbles}</div></div>
+    <div class="cols">
+      <div class="panel pad"><div class="phead"><div><div class="eyebrow">Signal</div><h3>Flagged by Industry Leaders</h3></div></div>${covItems}</div>
+      <div class="panel pad"><div class="phead"><div><div class="eyebrow">Distribution</div><h3>Companies by Growth Rate</h3></div></div>${growthHistogram()}</div>
+    </div>
+  </div>`;
+}
+function bubbleChart(){
+  const w=560,h=280,pad={l:46,r:16,t:14,b:34};const iw=w-pad.l-pad.r,ih=h-pad.t-pad.b;
+  if(!CO.length)return '<p class="note">No companies yet.</p>';
+  const maxV=Math.max(...CO.map(c=>c.valn),1),maxG=Math.max(...CO.map(c=>c.growth),1);
+  const X=v=>pad.l+(Math.log10(v+50)/Math.log10(maxV+50))*iw;const Y=g=>pad.t+ih-(g/(maxG*1.05))*ih;
+  let grid="";for(let k=0;k<=4;k++){const yy=pad.t+ih-k/4*ih;grid+=`<line class="gridline" x1="${pad.l}" y1="${yy}" x2="${w-pad.r}" y2="${yy}"/><text class="axlab" x="${pad.l-8}" y="${yy+3}" text-anchor="end">${Math.round(maxG*1.05*k/4)}%</text>`}
+  [100,1000,10000,40000].forEach(v=>{if(v<=maxV*1.2)grid+=`<line class="gridline" x1="${X(v)}" y1="${pad.t}" x2="${X(v)}" y2="${pad.t+ih}"/><text class="axlab" x="${X(v)}" y="${h-14}" text-anchor="middle">${fmtShort(v)}</text>`});
+  const dots=CO.map(c=>{const r=6+Math.sqrt(parseFloat(c.arr)||1)*1.1;const col=stageOf(c.stage).c;
+    return `<g style="cursor:pointer" onclick="openCo(${c.id})"><circle cx="${X(c.valn).toFixed(1)}" cy="${Y(c.growth).toFixed(1)}" r="${Math.min(26,r).toFixed(1)}" fill="${col}" fill-opacity=".28" stroke="${col}" stroke-width="1.5"/><title>${esc(c.name)} · ${c.val} · ${c.growth}% growth</title></g>`}).join("");
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" class="scatter">${grid}${dots}<text class="axlab" x="${pad.l}" y="12">growth ▲</text><text class="axlab" x="${w-pad.r}" y="${h-2}" text-anchor="end">valuation (log) ▶</text></svg>`;
+}
+function growthHistogram(){
+  const buckets=[["0–75%",0],["75–150%",0],["150–225%",0],["225–300%",0],["300%+",0]];
+  CO.forEach(c=>{const i=Math.min(4,Math.floor(c.growth/75));buckets[i][1]++});
+  const mx=Math.max(...buckets.map(b=>b[1]),1);
+  return `<div style="display:flex;flex-direction:column;gap:11px;margin-top:6px">${buckets.map(b=>`<div style="display:grid;grid-template-columns:74px 1fr 26px;align-items:center;gap:12px"><span class="note">${b[0]}</span><span class="fbar" style="height:22px"><i style="width:${b[1]/mx*100}%;background:linear-gradient(90deg,var(--teal),var(--gold))"></i></span><span class="mono" style="text-align:right">${b[1]}</span></div>`).join("")}</div>`;
+}
+
+function funnel(){
+  const byStage=id=>CO.filter(c=>c.stage===id);
+  document.getElementById('v-funnel').innerHTML=`
+    <div class="filters"><span class="eyebrow">Pipeline board</span>
+      <select class="sel"><option>All segments</option>${SEG.map(s=>`<option>${s[1]}</option>`).join("")}</select>
+      <select class="sel"><option>All investor tiers</option><option>Tier 1 only</option><option>Tier 1–2</option></select>
+      <button class="btn" style="margin-left:auto" onclick="go('companies')">+ Add company</button></div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;align-items:start">
+    ${STAGES.map(s=>`<div class="panel" style="min-height:200px">
+      <div class="pad" style="border-bottom:1px solid var(--line-soft)"><div style="display:flex;align-items:center;gap:8px"><span class="stagedot" style="background:${s.c};width:11px;height:11px"></span><b style="font-size:12.5px">S${s.id} · ${s.short}</b></div><div class="note" style="margin-top:4px">${s.count} companies</div></div>
+      <div class="pad" style="display:flex;flex-direction:column;gap:9px">
+      ${byStage(s.id).map(c=>`<div onclick="openCo(${c.id})" style="border:1px solid var(--line-soft);border-radius:10px;padding:10px;background:var(--panel-hi);cursor:pointer"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div class="logo" style="width:24px;height:24px;font-size:10px">${logoFor(c.name)}</div><b style="font-size:12.5px;flex:1">${c.name}</b>${scoreBadge(c.score)}</div><div class="note">${c.seg} · ${c.val}</div><div style="display:flex;gap:5px;margin-top:7px;flex-wrap:wrap"><span class="pill t${tierOfCo(c)}">T${tierOfCo(c)} lead</span><span class="pill up">▲ ${c.growth}%</span></div></div>`).join("")||`<div class="note" style="padding:10px 0">Monitoring…</div>`}
+      </div></div>`).join("")}</div>
+    <p class="note" style="margin-top:16px">Cards auto-advance when the daily agents detect a qualifying event — a marquee round (S2), a hyperscaler / NVIDIA / pharma quote (S3), or your own flag (S4).</p>`;
+}
+
+function companies(){
+  const rows=[...CO].sort((a,b)=>b.score-a.score).map(c=>`
+    <tr onclick="openCo(${c.id})"><td><div class="co"><div class="logo">${logoFor(c.name)}</div><div><b>${c.name}</b><small>${c.hq||''}</small></div></div></td>
+      <td><span class="tag">${c.seg}</span></td><td><span class="slabel"><span class="stagedot" style="background:${stageOf(c.stage).c}"></span>S${c.stage}</span></td>
+      <td class="num">${c.val}</td><td class="num">${c.arr}</td><td class="num"><span class="pill up">▲${c.growth}%</span></td>
+      <td><span class="pill t${tierOfCo(c)}">T${tierOfCo(c)}</span></td><td class="num">${meter(c.score)} ${scoreBadge(c.score)}</td></tr>`).join("");
+  document.getElementById('v-companies').innerHTML=`
+    <div class="filters"><span class="eyebrow">${CO.length} companies · trajectory tracked weekly</span>
+      <input class="sel" id="coFilter" placeholder="Filter name…" style="min-width:150px" oninput="filterCompanies(this.value)">
+      <button class="btn" style="margin-left:auto" onclick="addCompanyPrompt()">+ Add company</button></div>
+    <div class="panel" style="overflow:auto"><table><thead><tr><th>Company</th><th>Segment</th><th>Stage</th><th class="num">Valuation</th><th class="num">ARR</th><th class="num">Growth</th><th>Lead tier</th><th class="num">Horizon score</th></tr></thead><tbody id="coBody">${rows}</tbody></table></div>`;
+}
+function filterCompanies(q){q=(q||'').toLowerCase();document.querySelectorAll('#coBody tr').forEach(tr=>{tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none'})}
+
+function segments(){
+  const mx=Math.max(...SEG.map(s=>s[2]),1);
+  document.getElementById('v-segments').innerHTML=`
+   <div class="cols">
+    <div class="panel pad"><div class="phead"><div><div class="eyebrow">Coverage</div><h3>${SEG.length} frontier segments — companies flagged</h3></div></div>
+      <div style="display:flex;flex-direction:column;gap:8px">${[...SEG].sort((a,b)=>b[2]-a[2]).map(s=>`<div style="display:grid;grid-template-columns:150px 1fr 34px;align-items:center;gap:12px;cursor:pointer" onclick="openSeg('${esc(s[0])}')"><span style="font-size:12.5px">${s[1]}</span><span class="fbar" style="height:20px"><i style="width:${s[2]/mx*100}%;background:linear-gradient(90deg,var(--gold-dim),var(--gold))"></i></span><span class="mono" style="text-align:right;font-size:12px">${s[2]}</span></div>`).join("")}</div></div>
+    <div class="stack"><div class="panel pad"><div class="phead"><div><div class="eyebrow">Daily market intel</div><h3>Segment signal</h3></div></div>
+      ${[["Semiconductors","Custom inference ASICs gaining vs GPUs; Groq & Etched pressure NVIDIA margins.","▲ hot"],["Robotics","Foundation models for control attract hyperscaler capital.","▲ hot"],["Quantum","Error-correction milestones; still pre-revenue.","→ watch"],["Energy","Behind-the-meter power for data centers — new S1 flags daily.","▲ rising"]].map(x=>`<div class="lrow"><div class="rt"><b>${x[0]}</b><small>${x[1]}</small></div><span class="pill up">${x[2]}</span></div>`).join("")}</div>
+      <div class="panel pad"><div class="phead"><h3 style="font-size:13.5px">Grounding weight by segment</h3></div><p class="note">Agents prioritise reliable sources — configure in <a onclick="go('research')" style="color:var(--gold);cursor:pointer">Research &amp; Sources</a>.</p></div></div>
+   </div>`;
+}
+
+function investors(){
+  const tierMeta={1:["Tier 1 — Anchor","var(--gold)"],2:["Tier 2 — Strong","var(--teal)"],3:["Tier 3 — Emerging","var(--ink-2)"]};
+  const tm=(CONFIG.tierMultipliers)||{1:3,2:2,3:1.3};
+  let html="";[1,2,3].forEach(t=>{const list=INV.filter(i=>i.t===t);if(!list.length)return;
+    html+=`<div class="tierband"><span class="pill t${t}">${tierMeta[t][0]}</span><span class="note">${(tm[t]||tm[String(t)])}× weight · ${list.length} funds</span><span class="bar" style="background:linear-gradient(90deg,${tierMeta[t][1]},transparent)"></span></div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">${list.map(i=>`<div class="invcard" onclick="openInv('${esc(i.n)}')"><div class="invlogo" style="color:${tierMeta[t][1]}">${logoFor(i.n)}</div><div style="min-width:0"><div style="display:flex;align-items:center;gap:8px"><b style="font-size:14px">${i.n}</b></div><div class="note" style="margin:3px 0 6px">${i.aum||''} AUM · ${i.hq||''} · ${i.stage||''}</div><div style="display:flex;gap:5px;flex-wrap:wrap">${(i.focus||[]).slice(0,3).map(f=>`<span class="tag" style="font-size:10px">${f}</span>`).join("")}</div></div></div>`).join("")}</div>`;});
+  document.getElementById('v-investors').innerHTML=`<div class="filters"><span class="eyebrow">${INV.length} funds · tiered · drives investor-quality score</span><button class="btn" style="margin-left:auto" onclick="addInvestorPrompt()">+ Add fund</button></div>${html}
+    <p class="note" style="margin-top:18px">Tier multipliers are editable in Settings → Scoring. Higher-tier participation lifts a company's investor-quality sub-score.</p>`;
+}
+
+function research(){
+  const rel=r=>r==='high'?'t1':r==='pinned'?'t2':'t3';
+  const sw=(CONFIG.sourceWeights)||{investor:78,reports:70,youtube:52,social:40};
+  document.getElementById('v-research').innerHTML=`
+  <div class="cols">
+    <div class="stack">
+      <div class="panel pad"><div class="phead"><div><div class="eyebrow">Grounding</div><h3>Trusted sources</h3></div><button class="tb-btn" onclick="addSourcePrompt()">+ Add source</button></div>
+        ${SOURCES.length?SOURCES.map(s=>`<div class="src"><div class="srcic">${s.kind&&s.kind.includes('YouTube')?'▶':s.kind&&s.kind.includes('report')?'📄':'🌐'}</div><div style="flex:1"><b style="font-size:13px">${s.name}</b><div class="note">${s.detail||''}</div></div><span class="pill ${rel(s.reliability)}">${s.reliability||'medium'}</span></div>`).join(""):'<p class="note">No sources yet.</p>'}</div>
+      <div class="panel pad"><div class="phead"><h3 style="font-size:13.5px">Source-weighting</h3></div><p class="note" style="margin-bottom:12px">Bias daily research toward the most reliable grounding.</p>
+        ${[["Investor / VC sites","investor",sw.investor],["Vetted industry reports","reports",sw.reports],["Curated YouTube transcripts","youtube",sw.youtube],["Social / leader mentions","social",sw.social]].map(w=>`<div class="weightrow"><span style="font-size:12px">${w[0]}</span><input type="range" value="${w[2]}" oninput="this.nextElementSibling.textContent=this.value+'%'"><span class="mono" style="text-align:right">${w[2]}%</span></div>`).join("")}</div>
+    </div>
+    <div class="panel pad"><div class="phead"><div><div class="eyebrow">Ground the research</div><h3>Upload documents &amp; links</h3></div></div>
+      <div class="upload"><div style="font-size:26px">⇪</div><b>Drop PDFs, memos, decks</b><div class="note" style="margin-top:6px">or paste an article / YouTube / report URL</div>
+        <div style="margin-top:12px;display:flex;gap:8px;justify-content:center"><button class="btn" onclick="addSourcePrompt()">Add a source</button><button class="btn ghost" onclick="addSourcePrompt()">Paste link</button></div></div>
+      <p class="note" style="margin-top:14px">File ingestion & transcript indexing plug into the daily agents — connect an LLM/search key in Settings to enable automatic grounding.</p></div>
+  </div>`;
+}
+
+function agents(){
+  const runFallback=[["Trajectory","Updates revenue, ARR, EBITDA, valuation, multiples"],["Discovery","Finds promising companies across all segments"],["Digest","Composes & emails your synopsis"]];
+  const d=DIGEST;
+  document.getElementById('v-agents').innerHTML=`
+   <div class="cols">
+     <div class="panel pad"><div class="phead"><div><div class="eyebrow">Cadence · DAILY</div><h3>Agent run</h3></div><span class="chip dot" style="--c:var(--good)">${d?d.date:'not run yet'}</span></div>
+       <div class="tl">${(d&&d.highlights?d.highlights:runFallback.map(r=>r[0]+' — '+r[1])).map(x=>`<div class="ev"><b style="font-size:13px">${esc(typeof x==='string'?x:x[0])}</b></div>`).join("")}</div>
+       <div style="margin-top:8px;display:flex;gap:8px"><button class="btn" id="runBtn" onclick="runAgents()">Run agents now</button><button class="btn ghost" onclick="go('settings')">Configure cadence</button></div>
+       <p class="note" style="margin-top:12px">Discovery uses your configured engine (set ANTHROPIC_API_KEY to enable live web research); trajectory, scoring and the digest run without any key.</p></div>
+     <div class="stack">
+       <div class="panel pad brief"><div class="phead"><div><div class="eyebrow" style="color:var(--gold)">${d&&d.date?'Latest digest':'Digest preview'}</div><h3>Synopsis</h3></div></div>
+         <p class="note" style="margin-bottom:6px">To: ${RECIPIENTS.filter(r=>r.active).map(r=>r.email).join(', ')||'—'}</p>
+         <div style="font-size:12.5px;line-height:1.6"><b>Horizon — Daily Frontier Digest</b><br>${d?
+            `Pipeline ${d.stats.pipeline} · Shortlist ${d.stats.shortlist} · Median ${d.stats.medianScore} · Coverage ${d.stats.coverageHits}<br>`+ (d.highlights||[]).map(h=>'• '+esc(h)).join('<br>')
+            :'Run the agents to generate the first digest.'}</div></div>
+       <div class="panel pad"><div class="phead"><h3 style="font-size:13.5px">What each daily agent does</h3></div>
+         ${[["Discovery","Finds promising companies across all segments"],["Coverage","Listens for hyperscaler / NVIDIA / pharma mentions"],["Trajectory","Updates revenue, ARR, EBITDA, valuation, multiples"],["Scoring","Recomputes the Horizon score & re-ranks"],["Digest","Emails your synopsis"]].map(a=>`<div class="lrow"><div class="rt"><b>${a[0]}</b><small>${a[1]}</small></div><span class="chip dot" style="--c:var(--good)">daily</span></div>`).join("")}</div>
+     </div>
+   </div>`;
+}
+
+function settings(){
+  const w=(CONFIG.weights)||{growth:25,investors:20,coverage:20,valuation:15,segment:10,momentum:10};
+  const cad=(CONFIG.cadence)||{daily:"05:30",timezone:"America/Los_Angeles"};
+  const tm=(CONFIG.tierMultipliers)||{1:3,2:2,3:1.3};
+  const wl=[["Revenue / ARR growth","growth"],["Investor-base quality","investors"],["Big-tech interest & coverage","coverage"],["Valuation attractiveness","valuation"],["Segment / industry growth","segment"],["Momentum & round velocity","momentum"]];
+  document.getElementById('v-settings').innerHTML=`
+   <div class="cols">
+     <div class="stack">
+       <div class="panel pad"><div class="phead"><div><div class="eyebrow">Delivery</div><h3>Email recipients</h3></div></div>
+         <p class="note" style="margin-bottom:12px">The daily synopsis is sent to everyone here at the cadence below.</p>
+         ${RECIPIENTS.map(r=>`<div class="email-row"><div class="avatar" style="width:24px;height:24px;font-size:10px">${logoFor(r.email)}</div><span>${r.email}</span>${r.role==='owner'?'<span class="pill t1">owner</span>':`<span class="x" title="remove" onclick="removeRecipient(${r.id})">✕</span>`}</div>`).join("")}
+         <div class="field" style="margin-top:6px"><div style="display:flex;gap:8px"><input id="newEmail" placeholder="add teammate@fund.com" style="flex:1" onkeydown="if(event.key==='Enter')addRecipient()"><button class="btn" onclick="addRecipient()">Add</button></div></div>
+       </div>
+       <div class="panel pad"><div class="phead"><div><div class="eyebrow">Automation</div><h3>Agent cadence</h3></div></div>
+         <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0"><div><b style="font-size:13px">Daily discovery &amp; digest</b><div class="note">runs ${cad.daily} ${cad.timezone}</div></div><button class="toggle"></button></div>
+         <div class="field" style="margin-top:10px"><label>Daily run time (HH:MM) &amp; timezone</label><div style="display:flex;gap:8px"><input id="cadTime" value="${cad.daily}" style="width:110px"><input id="cadTz" value="${cad.timezone}" style="flex:1"><button class="btn ghost" onclick="saveCadence()">Save</button></div></div>
+       </div>
+     </div>
+     <div class="panel pad"><div class="phead"><div><div class="eyebrow">Methodology</div><h3>Horizon score weighting</h3></div><span class="chip">weighted</span></div>
+       ${wl.map(x=>`<div class="weightrow"><span style="font-size:12px">${x[0]}</span><input type="range" data-wk="${x[1]}" value="${w[x[1]]}" max="40" oninput="this.nextElementSibling.textContent=this.value+'%'"><span class="mono" style="text-align:right">${w[x[1]]}%</span></div>`).join("")}
+       <div class="hr" style="margin:14px 0"></div>
+       <div class="phead"><h3 style="font-size:13.5px">Investor tier multipliers</h3></div>
+       ${[["Tier 1 — anchor funds",1],["Tier 2 — strong funds",2],["Tier 3 — emerging funds",3]].map(t=>`<div class="weightrow"><span style="font-size:12px">${t[0]}</span><input type="range" data-tm="${t[1]}" min="1" max="4" step="0.1" value="${tm[t[1]]||tm[String(t[1])]}" oninput="this.nextElementSibling.textContent=this.value+'×'"><span class="mono" style="text-align:right">${tm[t[1]]||tm[String(t[1])]}×</span></div>`).join("")}
+       <button class="btn" style="margin-top:8px" onclick="saveMethodology()">Save methodology</button>
+     </div>
+   </div>`;
+}
+
+/* ===================== drawers ===================== */
+async function openCo(id){
+  const c=CO.find(x=>x.id===id);if(!c)return;
+  const invs=(c.investors||[]).map(n=>`<span class="tag">${n} <span class="pill t${INVBYNAME[n]?.t||3}" style="padding:1px 5px;font-size:9px">T${INVBYNAME[n]?.t||3}</span></span>`).join(" ");
+  const mult=(c.valn/(parseFloat(c.arr)||1)).toFixed(1);
+  document.getElementById('drawer').innerHTML=`
+   <div class="dhead"><button class="dclose" onclick="closeDrawer()">✕</button>
+     <div style="display:flex;align-items:center;gap:14px"><div class="logo" style="width:48px;height:48px;font-size:16px">${logoFor(c.name)}</div><div><div style="display:flex;align-items:center;gap:10px"><h2 style="font-size:20px">${c.name}</h2>${scoreBadge(c.score)}</div><div class="note" style="margin-top:3px">${c.seg} · ${c.hq||''} · Stage ${c.stage} · ${c.round||''}</div></div></div>
+     <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap"><span class="chip dot" style="--c:${stageOf(c.stage).c}">S${c.stage} · ${stageOf(c.stage).short}</span><span class="chip">Lead tier T${tierOfCo(c)}</span>${c.coverage&&c.coverage!=="—"?`<span class="chip dot" style="--c:var(--good)">Covered: ${c.coverage}</span>`:""}</div></div>
+   <div class="dbody">
+     <div class="metric-grid"><div class="metric"><div class="l">Valuation</div><div class="v">${c.val}</div></div><div class="metric"><div class="l">ARR</div><div class="v">${c.arr}</div></div><div class="metric"><div class="l">Growth (YoY)</div><div class="v" style="color:var(--good)">▲${c.growth}%</div></div><div class="metric"><div class="l">Rev multiple</div><div class="v">${mult}×</div></div><div class="metric"><div class="l">Last round</div><div class="v" style="font-size:15px">${c.round||'—'}</div></div><div class="metric"><div class="l">Horizon score</div><div class="v">${c.score}<span class="dim" style="font-size:12px">/100</span></div></div></div>
+     <div class="cols" style="grid-template-columns:1.3fr 1fr">
+       <div class="panel pad"><div class="phead"><div><div class="eyebrow">Trajectory · indexed to peak</div><h3 style="font-size:13.5px">ARR &amp; Valuation growth</h3></div><div class="seg-legend"><span><span class="stagedot" style="background:var(--gold)"></span>ARR</span><span><span class="stagedot" style="background:var(--teal)"></span>Valuation</span></div></div>${lineChart([{vals:c.revHist&&c.revHist.length?c.revHist:[0],c:"var(--gold)"},{vals:c.valHist&&c.valHist.length?c.valHist:[0],c:"var(--teal)"}],560,200,true)}</div>
+       <div class="panel pad"><div class="phead"><div><div class="eyebrow">Score breakdown</div><h3 style="font-size:13.5px">Six factors</h3></div></div>${radar(c.sc||{})}</div>
+     </div>
+     <div class="panel pad"><div class="phead"><h3 style="font-size:13.5px">Investor base</h3></div><div style="display:flex;gap:8px;flex-wrap:wrap">${invs||'<span class="note">—</span>'}</div></div>
+     <div class="panel pad"><div class="phead"><div><div class="eyebrow">Momentum</div><h3 style="font-size:13.5px">Announcements &amp; signals</h3></div></div><div id="annTl" class="tl"><div class="ev"><b style="font-size:13px">Loading…</b></div></div></div>
+     <div style="display:flex;gap:8px"><button class="btn" onclick="flagCompany(${c.id})">${c.flagged?'★ Flagged':'★ Personally flag (Stage 4)'}</button></div>
+   </div>`;
+  showDrawer();
+  try{const full=await api('/companies/'+id);
+    document.getElementById('annTl').innerHTML=(full.announcements||[]).map(a=>`<div class="ev"><time>${a.at||''}</time> · <b style="font-size:13px">${esc(a.title||'')}</b><div class="note" style="margin-top:2px">${esc(a.detail||'')}</div></div>`).join("")||'<div class="ev"><div class="note">No announcements yet.</div></div>';
+  }catch(_){}
+}
+function openInv(name){
+  const i=INVBYNAME[name];if(!i)return;
+  const portfolio=CO.filter(c=>(c.investors||[]).includes(name));
+  document.getElementById('drawer').innerHTML=`
+   <div class="dhead"><button class="dclose" onclick="closeDrawer()">✕</button><div style="display:flex;align-items:center;gap:14px"><div class="invlogo" style="width:52px;height:52px;font-size:17px">${logoFor(i.n)}</div><div><div style="display:flex;align-items:center;gap:10px"><h2 style="font-size:20px">${i.n}</h2><span class="pill t${i.t}">Tier ${i.t}</span></div><div class="note" style="margin-top:3px">${i.hq||''} · ${i.stage||''} · ${i.geo||''}</div></div></div></div>
+   <div class="dbody"><p style="font-size:14px;line-height:1.6;color:var(--ink-2)">${i.desc||''}</p>
+     <div class="metric-grid"><div class="metric"><div class="l">AUM</div><div class="v">${i.aum||'—'}</div></div><div class="metric"><div class="l">HQ</div><div class="v" style="font-size:15px">${i.hq||'—'}</div></div><div class="metric"><div class="l">Stage</div><div class="v" style="font-size:15px">${i.stage||'—'}</div></div></div>
+     <div class="panel pad"><div class="phead"><h3 style="font-size:13.5px">Focus sectors</h3></div><div style="display:flex;gap:8px;flex-wrap:wrap">${(i.focus||[]).map(f=>`<span class="tag">${f}</span>`).join("")||'—'}</div></div>
+     <div class="panel pad"><div class="phead"><h3 style="font-size:13.5px">Key partners</h3></div><div style="display:flex;gap:8px;flex-wrap:wrap">${(i.partners||[]).map(p=>`<span class="tag">👤 ${p}</span>`).join("")||'—'}</div></div>
+     <div class="panel pad"><div class="phead"><div><div class="eyebrow">Overlap</div><h3 style="font-size:13.5px">In your pipeline (${portfolio.length})</h3></div></div>${portfolio.length?portfolio.map(c=>`<div class="lrow" onclick="openCo(${c.id})" style="cursor:pointer"><div class="logo" style="width:26px;height:26px;font-size:10px">${logoFor(c.name)}</div><div class="rt"><b>${c.name}</b><small>${c.seg} · ${c.val}</small></div>${scoreBadge(c.score)}</div>`).join(""):'<p class="note">No tracked overlap yet.</p>'}</div>
+     <div class="panel pad"><div class="phead"><h3 style="font-size:13.5px">Media coverage</h3></div><p class="note">${i.media||'—'}</p></div>
+   </div>`;
+  showDrawer();
+}
+function openSeg(short){
+  const s=SEG.find(x=>x[0]===short);if(!s)return;const list=CO.filter(c=>c.seg===short);
+  document.getElementById('drawer').innerHTML=`
+   <div class="dhead"><button class="dclose" onclick="closeDrawer()">✕</button><div class="eyebrow">Frontier segment</div><h2 style="font-size:20px;margin-top:4px">${s[1]}</h2><div class="note" style="margin-top:4px">${s[2]} companies flagged · daily monitoring</div></div>
+   <div class="dbody"><div class="panel pad"><div class="phead"><h3 style="font-size:13.5px">Tracked in pipeline</h3></div>${list.length?list.map(c=>`<div class="lrow" onclick="openCo(${c.id})" style="cursor:pointer"><div class="logo" style="width:26px;height:26px;font-size:10px">${logoFor(c.name)}</div><div class="rt"><b>${c.name}</b><small>Stage ${c.stage} · ${c.val}</small></div>${scoreBadge(c.score)}</div>`).join(""):'<p class="note">Monitoring — agents surface candidates daily.</p>'}</div>
+     <div class="panel pad"><div class="phead"><h3 style="font-size:13.5px">Why it matters</h3></div><p class="note" style="line-height:1.6">Daily agents track market structure, funding velocity and hyperscaler signals across ${s[1].toLowerCase()}.</p></div></div>`;
+  showDrawer();
+}
+function showDrawer(){document.getElementById('scrim').classList.add('on');document.getElementById('drawer').classList.add('on');document.getElementById('drawer').scrollTop=0}
+function closeDrawer(){document.getElementById('scrim').classList.remove('on');document.getElementById('drawer').classList.remove('on')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
+
+/* ===================== actions ===================== */
+async function runAgents(){const b=document.getElementById('runBtn');if(b){b.textContent='Running…';b.disabled=true}try{const r=await api('/agents/run','POST');await boot();go('agents');toast(r.emailed?'Agents ran · digest emailed':'Agents ran · digest generated (configure SMTP to email)')}catch(e){toast('Run failed: '+e.message)}}
+async function addRecipient(){const el=document.getElementById('newEmail');const email=(el?.value||'').trim();if(!email)return;try{await api('/recipients','POST',{email});await boot();go('settings');toast('Recipient added')}catch(e){toast(e.message)}}
+async function removeRecipient(id){try{await api('/recipients/'+id,'DELETE');await boot();go('settings')}catch(e){toast(e.message)}}
+async function saveMethodology(){const w={};document.querySelectorAll('[data-wk]').forEach(s=>w[s.dataset.wk]=Number(s.value));const tm={};document.querySelectorAll('[data-tm]').forEach(s=>tm[s.dataset.tm]=Number(s.value));try{await api('/config','PUT',{weights:w,tierMultipliers:tm});await boot();go('settings');toast('Methodology saved · scores updated')}catch(e){toast(e.message)}}
+async function saveCadence(){const daily=document.getElementById('cadTime').value.trim();const timezone=document.getElementById('cadTz').value.trim();try{await api('/config','PUT',{cadence:{...(CONFIG.cadence||{}),daily,timezone}});await boot();go('settings');toast('Cadence saved')}catch(e){toast(e.message)}}
+async function flagCompany(id){try{await api('/companies/'+id,'PATCH',{flag:true});await boot();closeDrawer();go('funnel');toast('Flagged to Stage 4')}catch(e){toast(e.message)}}
+async function addCompanyPrompt(){const name=prompt('Company name');if(!name)return;const seg=prompt('Segment short name (e.g. Frontier AI, Semis, Robotics)','Frontier AI');try{await api('/companies','POST',{name,segment_short:seg,stage:1,valuation_musd:0,arr_musd:0,growth_pct:0});await boot();go('companies');toast('Company added')}catch(e){toast(e.message)}}
+async function addInvestorPrompt(){const name=prompt('Fund name');if(!name)return;const tier=Number(prompt('Tier (1,2,3)','2'))||2;try{await api('/investors','POST',{name,tier});await boot();go('investors');toast('Fund added')}catch(e){toast(e.message)}}
+async function addSourcePrompt(){const name=prompt('Source name or URL');if(!name)return;try{await api('/sources','POST',{name,kind:'link',detail:'Added by you'});await boot();go('research');toast('Source added')}catch(e){toast(e.message)}}
+
+function toast(msg){let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel-hi);border:1px solid var(--gold);color:var(--ink);padding:10px 16px;border-radius:10px;z-index:99;font-size:13px;box-shadow:var(--shadow)';document.body.appendChild(t)}t.textContent=msg;t.style.opacity='1';clearTimeout(window._tt);window._tt=setTimeout(()=>t.style.opacity='0',2600)}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+
+/* ===================== nav ===================== */
+const TITLES={dashboard:["Command","Dashboard"],funnel:["Pipeline","Deal Funnel"],companies:["Pipeline","Companies"],segments:["Intelligence","Segments"],investors:["Intelligence","Investors"],research:["Intelligence","Research & Sources"],agents:["System","Daily Agents"],settings:["System","Settings"]};
+function go(v){document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('on',a.dataset.view===v));document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));document.getElementById('crumb').textContent=TITLES[v][0]+" / "+TITLES[v][1];document.getElementById('ptitle').textContent=TITLES[v][1];window.scrollTo({top:0,behavior:'smooth'})}
+document.getElementById('nav').addEventListener('click',e=>{const a=e.target.closest('a');if(a)go(a.dataset.view)});
+function toggleTheme(){const r=document.documentElement;const cur=r.getAttribute('data-theme');const isLight=cur?cur==='light':!matchMedia('(prefers-color-scheme: dark)').matches;r.setAttribute('data-theme',isLight?'dark':'light')}
+
+/* ===================== boot ===================== */
+async function boot(){
+  try{
+    const d=await api('/bootstrap');
+    STAGES=d.stages;SEG=d.segments;INV=d.investors;CO=d.companies;
+    INVBYNAME=Object.fromEntries(INV.map(i=>[i.n,i]));
+    RECIPIENTS=d.recipients||[];SOURCES=d.sources||[];CONFIG=d.config||{};DIGEST=d.digest||null;
+    const st=document.getElementById('agentStatus');if(st&&CONFIG.cadence)st.innerHTML='<span class="pulse"></span> Agents live · '+CONFIG.cadence.daily;
+    render();
+  }catch(e){
+    document.getElementById('v-dashboard').innerHTML=`<div class="panel pad"><h3>Starting up…</h3><p class="note" style="margin-top:8px">${esc(e.message)}</p><p style="margin-top:10px">The database may still be initialising. <button class="btn" onclick="boot()">Retry</button></p></div>`;
+  }
+}
+boot();
+</script>
+</body>
+</html>
