@@ -96,11 +96,12 @@ app.get('/api/bootstrap', guard, async (req, res, next) => {
     const cfg = await getConfig();
     const look = await getLookups();
     const companies = await shapeCompanies(cfg, look);
-    const stages = (cfg.stages || db.DEFAULT_CONFIG.stages).map((s, i) => ({
+    // Every count reflects real, clickable companies in the database.
+    const stages = (cfg.stages || db.DEFAULT_CONFIG.stages).map((s) => ({
       id: s.id, short: s.short, full: s.full, c: `var(--s${s.id})`,
-      count: (cfg.funnelCounts && cfg.funnelCounts[i]) || companies.filter((c) => c.stage === s.id).length,
+      count: companies.filter((c) => c.stage === s.id).length,
     }));
-    const segments = look.segments.map((s) => [s.short, s.name, s.flagged]);
+    const segments = look.segments.map((s) => [s.short, s.name, companies.filter((c) => c.seg === s.short).length]);
     const investors = look.investors.map(shapeInvestor);
     const recipients = (await db.q('SELECT id,email,role,active FROM recipients ORDER BY id')).rows;
     const sources = (await db.q('SELECT id,kind,name,detail,reliability,url FROM sources ORDER BY id')).rows;

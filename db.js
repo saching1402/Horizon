@@ -133,10 +133,11 @@ CREATE INDEX IF NOT EXISTS idx_ci_company ON company_investors(company_id);
 `;
 
 /* ---------------------- default config ---------------------- */
+const SEED_VERSION = 2;
 const DEFAULT_CONFIG = {
+  seedVersion: SEED_VERSION,
   weights: { growth: 25, investors: 20, coverage: 20, valuation: 15, segment: 10, momentum: 10 },
   tierMultipliers: { '1': 3.0, '2': 2.0, '3': 1.3 },
-  funnelCounts: [487, 163, 64, 29, 12],
   stages: [
     { id: 1, short: 'Web-Flagged', full: 'Flagged through web analysis' },
     { id: 2, short: 'VC-Backed', full: 'Invested by marquee early-stage managers' },
@@ -330,9 +331,61 @@ function fmtUsd(m, arr) {
   return '$' + (Math.round(n * 10) / 10) + 'M';
 }
 
+/* Early-stage (Stage 1–2) real companies — give the funnel a genuine base.
+   name, seg, stage, val(musd), arr(musd), growth, coverage, round, hq, [investors] */
+const EARLY = [
+  ['Reflection AI', 'Agentic', 1, 545, 4, 300, '—', 'Series A', 'New York', ['Lightspeed', 'Radical Ventures']],
+  ['Decart', 'World Models', 1, 500, 4, 350, '—', 'Series A', 'Tel Aviv', ['Index Ventures']],
+  ['Cartesia', 'Frontier AI', 1, 900, 6, 320, '—', 'Series A', 'San Francisco', ['Index Ventures', 'Lightspeed']],
+  ['Mercor', 'AI Services', 1, 2000, 75, 280, '—', 'Series B', 'San Francisco', ['IVP', '8VC']],
+  ['Standard Bots', 'Robotics', 1, 300, 20, 150, '—', 'Series B', 'New York', ['Eclipse Ventures']],
+  ['Extropic', 'Semis', 1, 300, 1, 220, '—', 'Seed', 'Austin', ['DCVC']],
+  ['Positron', 'Semis', 1, 320, 8, 260, '—', 'Series A', 'Reno', ['DCVC', 'Eclipse Ventures']],
+  ['Radiant Industries', 'Energy', 1, 500, 6, 180, '—', 'Series C', 'El Segundo', ['DCVC', 'Khosla Ventures']],
+  ['K2 Space', 'Space', 1, 400, 8, 220, '—', 'Series B', 'Torrance', ['Lux Capital', '8VC']],
+  ['Periodic Labs', 'Materials', 1, 600, 2, 300, '—', 'Seed', 'San Francisco', ['Andreessen Horowitz', 'DCVC']],
+  ['Lila Sciences', 'Materials', 2, 1000, 4, 300, '—', 'Series A', 'Cambridge', ['Khosla Ventures', 'DCVC']],
+  ['Harvey', 'AI Apps', 2, 5000, 75, 200, '—', 'Series D', 'San Francisco', ['IVP', 'Index Ventures']],
+  ['Glean', 'AI Apps', 2, 7200, 100, 140, '—', 'Series F', 'Palo Alto', ['Lightspeed', 'IVP']],
+  ['Suno', 'AI Apps', 2, 500, 30, 180, '—', 'Series B', 'Cambridge', ['Lightspeed', 'Index Ventures']],
+];
+
+// Idempotent, safe on every boot: correct stage semantics and top up early-stage
+// companies. Runs for fresh and existing databases; never touches rows you flagged.
+async function reconcile() {
+  // Stage 4 ("My Flag") is reserved for companies YOU personally flag. Move any
+  // auto-seeded rows out of it: leader-covered → Stage 3, otherwise → Stage 2.
+  await q(`UPDATE companies SET stage=3, updated_at=now()
+           WHERE stage=4 AND personally_flagged=false AND coverage IS NOT NULL AND coverage <> '—'`);
+  await q(`UPDATE companies SET stage=2, updated_at=now()
+           WHERE stage=4 AND personally_flagged=false AND (coverage IS NULL OR coverage = '—')`);
+
+  for (const [name, seg, stage, val, arr, growth, coverage, round, hq, investors] of EARLY) {
+    const r = await q(
+      `INSERT INTO companies (name, segment_short, stage, valuation_musd, arr_musd, growth_pct, coverage, round, hq)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT (name) DO NOTHING RETURNING id`,
+      [name, seg, stage, val, arr, growth, coverage, round, hq]);
+    if (!r.rows.length) continue; // already present
+    const cid = r.rows[0].id;
+    for (let k = 0; k < investors.length; k++) {
+      await q(`INSERT INTO company_investors (company_id, investor_name, lead) VALUES ($1,$2,$3) ON CONFLICT DO NOTHING`,
+        [cid, investors[k], k === 0]);
+    }
+    const h = history(arr, val, growth);
+    for (let s = 0; s < h.rev.length; s++) {
+      await q(`INSERT INTO financials (company_id, period, seq, revenue_musd, arr_musd, ebitda_musd, valuation_musd)
+               VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+        [cid, 'Q' + (s + 1), s, h.rev[s], h.rev[s], Math.round(h.rev[s] * 0.12), h.val[s]]);
+    }
+    await q(`INSERT INTO announcements (company_id, at, title, detail) VALUES ($1,'Jul 2026',$2,$3)`,
+      [cid, `${round} at ${fmtUsd(val)}`, `Flagged via web analysis. Lead investor: ${investors[0]}.`]);
+  }
+}
+
 async function init() {
   await migrate();
   if (!(await isSeeded())) await seed();
+  await reconcile();
 }
 
 module.exports = { pool, q, init, migrate, seed, isSeeded, DEFAULT_CONFIG, fmtUsd };
