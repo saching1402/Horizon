@@ -103,6 +103,8 @@ button{font-family:inherit;cursor:pointer}
 .btn:hover{background:var(--gold-hi)}
 .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink-2)}
 .btn.ghost:hover{border-color:var(--gold);color:var(--ink)}
+.btn.danger{background:transparent;border:1px solid color-mix(in srgb,var(--bad) 45%,var(--line));color:var(--bad)}
+.btn.danger:hover{background:color-mix(in srgb,var(--bad) 14%,transparent);border-color:var(--bad)}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .kpi{position:relative;overflow:hidden}
 .kpi .val{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1;margin:6px 0 5px;font-variant-numeric:tabular-nums}
@@ -486,7 +488,7 @@ async function openCo(id){
      </div>
      <div class="panel pad"><div class="phead"><h3 style="font-size:13.5px">Investor base</h3></div><div style="display:flex;gap:8px;flex-wrap:wrap">${invs||'<span class="note">—</span>'}</div></div>
      <div class="panel pad"><div class="phead"><div><div class="eyebrow">Momentum</div><h3 style="font-size:13.5px">Announcements &amp; signals</h3></div></div><div id="annTl" class="tl"><div class="ev"><b style="font-size:13px">Loading…</b></div></div></div>
-     <div style="display:flex;gap:8px"><button class="btn" onclick="flagCompany(${c.id})">${c.flagged?'★ Flagged':'★ Personally flag (Stage 4)'}</button></div>
+     <div style="display:flex;gap:8px;align-items:center"><button class="btn" onclick="flagCompany(${c.id})">${c.flagged?'★ Flagged':'★ Personally flag (Stage 4)'}</button><button class="btn danger" style="margin-left:auto" onclick="deleteCompany(${c.id})">🗑 Delete company</button></div>
    </div>`;
   showDrawer();
   try{const full=await api('/companies/'+id);
@@ -526,6 +528,7 @@ async function removeRecipient(id){try{await api('/recipients/'+id,'DELETE');awa
 async function saveMethodology(){const w={};document.querySelectorAll('[data-wk]').forEach(s=>w[s.dataset.wk]=Number(s.value));const tm={};document.querySelectorAll('[data-tm]').forEach(s=>tm[s.dataset.tm]=Number(s.value));try{await api('/config','PUT',{weights:w,tierMultipliers:tm});await boot();go('settings');toast('Methodology saved · scores updated')}catch(e){toast(e.message)}}
 async function saveCadence(){const daily=document.getElementById('cadTime').value.trim();const timezone=document.getElementById('cadTz').value.trim();try{await api('/config','PUT',{cadence:{...(CONFIG.cadence||{}),daily,timezone}});await boot();go('settings');toast('Cadence saved')}catch(e){toast(e.message)}}
 async function flagCompany(id){try{await api('/companies/'+id,'PATCH',{flag:true});await boot();closeDrawer();go('funnel');toast('Flagged to Stage 4')}catch(e){toast(e.message)}}
+async function deleteCompany(id){const c=CO.find(x=>x.id===id);if(!confirm('Delete '+(c?c.name:'this company')+'? This permanently removes the company and its trajectory, investors and announcements.'))return;try{await api('/companies/'+id,'DELETE');await boot();closeDrawer();toast('Company deleted')}catch(e){toast(e.message)}}
 async function addCompanyPrompt(){const name=prompt('Company name');if(!name)return;const seg=prompt('Segment short name (e.g. Frontier AI, Semis, Robotics)','Frontier AI');try{await api('/companies','POST',{name,segment_short:seg,stage:1,valuation_musd:0,arr_musd:0,growth_pct:0});await boot();go('companies');toast('Company added')}catch(e){toast(e.message)}}
 async function addInvestorPrompt(){const name=prompt('Fund name');if(!name)return;const tier=Number(prompt('Tier (1,2,3)','2'))||2;try{await api('/investors','POST',{name,tier});await boot();go('investors');toast('Fund added')}catch(e){toast(e.message)}}
 async function addSourcePrompt(){const name=prompt('Source name or URL');if(!name)return;try{await api('/sources','POST',{name,kind:'link',detail:'Added by you'});await boot();go('research');toast('Source added')}catch(e){toast(e.message)}}
